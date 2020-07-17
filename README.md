@@ -1,13 +1,14 @@
-# gin-csrf [![Build Status](https://travis-ci.org/utrack/gin-csrf.svg?branch=master)](https://travis-ci.org/utrack/gin-csrf)
+# gin-csrf [![Build Status](https://travis-ci.org/MariusDieckmann/gin-csrf.svg?branch=master)](https://travis-ci.org/MariusDieckmann/gin-csrf)
 
 CSRF protection middleware for [Gin]. This middleware has to be used with [gin-contrib/sessions](https://github.com/gin-contrib/sessions).
 
-Original credit to [tommy351](https://github.com/tommy351/gin-csrf), this fork makes it work with gin-gonic contrib sessions.
+Original credit to [tommy351](https://github.com/tommy351/gin-csrf).
+Further credit to [utrack](https://github.com/utrack/gin-csrf).
 
 ## Installation
 
 ``` bash
-$ go get github.com/utrack/gin-csrf
+$ go get github.com/MariusDieckmann/gin-csrf
 ```
 
 ## Usage
