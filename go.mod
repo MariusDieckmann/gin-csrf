@@ -1,4 +1,4 @@
-module github.com/utrack/gin-csrf
+module github.com/MariusDieckmann/gin-csrf
 
 go 1.14
 
