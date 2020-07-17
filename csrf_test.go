@@ -1,12 +1,15 @@
 package csrf
 
 import (
-	"github.com/gin-contrib/sessions/cookie"
+	"encoding/base64"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/gin-contrib/sessions/cookie"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -262,5 +265,26 @@ func TestTokenGetter(t *testing.T) {
 
 	if body := r2.Body.String(); body != "OK" {
 		t.Error("Response is not OK: ", body)
+	}
+}
+
+func TestRandomStringGenerator(t *testing.T) {
+	stringLen := 72
+	rndString, err := getRandomString(72)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if rndString == "" {
+		t.Error(errors.New("random string ist empty"))
+	}
+
+	rawRndData, err := base64.RawStdEncoding.DecodeString(rndString)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(rawRndData) != stringLen {
+		t.Errorf("Unexpected len of random data byte array, found: %v expected: %v", len(rawRndData), stringLen)
 	}
 }
