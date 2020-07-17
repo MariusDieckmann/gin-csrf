@@ -3,7 +3,6 @@ module github.com/MariusDieckmann/gin-csrf
 go 1.14
 
 require (
-	github.com/dchest/uniuri v0.0.0-20160212164326-8902c56451e9
 	github.com/gin-contrib/sessions v0.0.4-0.20200514145905-5a8672ec5752
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-playground/validator/v10 v10.3.0 // indirect

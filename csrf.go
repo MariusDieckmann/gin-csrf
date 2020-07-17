@@ -1,11 +1,12 @@
 package csrf
 
 import (
+	"crypto/rand"
 	"encoding/base64"
 	"errors"
 	"io"
+	"log"
 
-	"github.com/dchest/uniuri"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/sha3"
@@ -16,6 +17,9 @@ const (
 	csrfSalt   = "csrfSalt"
 	csrfToken  = "csrfToken"
 )
+
+// Len of the salt
+var saltLen = 64
 
 var defaultIgnoreMethods = []string{"GET", "HEAD", "OPTIONS"}
 
@@ -45,6 +49,7 @@ type Options struct {
 	IgnoreMethods []string
 	ErrorFunc     gin.HandlerFunc
 	TokenGetter   func(c *gin.Context) string
+	SaltLen       int
 }
 
 func tokenize(secret, salt string) string {
@@ -86,6 +91,10 @@ func Middleware(options Options) gin.HandlerFunc {
 		tokenGetter = defaultTokenGetter
 	}
 
+	if options.SaltLen > 0 {
+		saltLen = options.SaltLen
+	}
+
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		c.Set(csrfSecret, options.Secret)
@@ -122,9 +131,14 @@ func GetToken(c *gin.Context) string {
 		return t.(string)
 	}
 
+	var err error
 	salt, ok := session.Get(csrfSalt).(string)
 	if !ok {
-		salt = uniuri.New()
+		salt, err = getRandomString(saltLen)
+		if err != nil {
+			// TODO: should this really panic?
+			panic(err.Error())
+		}
 		session.Set(csrfSalt, salt)
 		session.Save()
 	}
@@ -132,4 +146,16 @@ func GetToken(c *gin.Context) string {
 	c.Set(csrfToken, token)
 
 	return token
+}
+
+func getRandomString(len int) (string, error) {
+	b := make([]byte, len)
+	_, err := rand.Read(b)
+	if err != nil {
+		log.Println(err.Error())
+		return "", err
+	}
+
+	secretString := base64.RawStdEncoding.EncodeToString(b)
+	return secretString, nil
 }
