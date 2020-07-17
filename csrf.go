@@ -1,7 +1,6 @@
 package csrf
 
 import (
-	"crypto/sha1"
 	"encoding/base64"
 	"errors"
 	"io"
@@ -9,6 +8,7 @@ import (
 	"github.com/dchest/uniuri"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/sha3"
 )
 
 const (
@@ -48,7 +48,7 @@ type Options struct {
 }
 
 func tokenize(secret, salt string) string {
-	h := sha1.New()
+	h := sha3.New512()
 	io.WriteString(h, salt+"-"+secret)
 	hash := base64.URLEncoding.EncodeToString(h.Sum(nil))
 
